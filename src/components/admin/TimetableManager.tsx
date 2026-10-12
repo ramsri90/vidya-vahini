@@ -4,7 +4,6 @@ import * as React from "react";
 import {
   Calendar,
   Upload,
-  Download,
   FileSpreadsheet,
   FileText,
   AlertCircle,
@@ -91,8 +90,7 @@ export function TimetableManager({ sections, timetables }: TimetableManagerProps
   const [parseResult, setParseResult] = React.useState<ParseResult | null>(null);
   const [parseError, setParseError] = React.useState<string | null>(null);
 
-  // Attachment State (PDF / Image)
-  const [attachmentUploading, setAttachmentUploading] = React.useState(false);
+  // Attachment Data (for existing timetables)
   const [attachmentData, setAttachmentData] = React.useState<{ key: string; name: string } | null>(null);
 
   // Editable Slots
@@ -152,48 +150,6 @@ export function TimetableManager({ sections, timetables }: TimetableManagerProps
       setParseError("An unexpected error occurred while parsing the file.");
     } finally {
       setIsParsing(false);
-    }
-  };
-
-  const handleAttachmentUpload = async (fileToUpload: File) => {
-    setAttachmentUploading(true);
-    try {
-      // 1. Get presigned upload URL
-      const presignRes = await fetch("/api/timetable/presign-attachment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          filename: fileToUpload.name,
-          mimeType: fileToUpload.type,
-          sizeBytes: fileToUpload.size,
-        }),
-      });
-
-      if (!presignRes.ok) {
-        const err = await presignRes.json();
-        throw new Error(err.error || "Failed to initialize attachment upload.");
-      }
-
-      const { uploadUrl, storageKey, filename } = await presignRes.json();
-
-      // 2. Upload file directly to R2
-      const s3Res = await fetch(uploadUrl, {
-        method: "PUT",
-        headers: { "Content-Type": fileToUpload.type },
-        body: fileToUpload,
-      });
-
-      if (!s3Res.ok) {
-        throw new Error("Failed to upload attachment to cloud storage.");
-      }
-
-      setAttachmentData({ key: storageKey, name: filename });
-      setActionMessage({ type: "success", text: `Official attachment "${filename}" uploaded.` });
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Attachment upload failed.";
-      setActionMessage({ type: "error", text: msg });
-    } finally {
-      setAttachmentUploading(false);
     }
   };
 
@@ -415,64 +371,29 @@ export function TimetableManager({ sections, timetables }: TimetableManagerProps
             </div>
           </div>
         </div>
-
-        {/* Upload Dropzones */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          {/* 1. Excel File Upload */}
-          <div className="rounded-[10px] border-2 border-dashed border-[#E7E0D2] bg-[#FDFBF6] p-5 text-center transition hover:border-[#0F766E]/50">
-            <FileSpreadsheet className="w-8 h-8 text-[#0F766E] mx-auto mb-2" />
-            <h3 className="text-xs font-bold text-[#1F2937]">Structured Excel Timetable (.xlsx)</h3>
-            <p className="text-[11px] text-[#6B7280] mt-1 mb-3">
-              Upload your completed schedule spreadsheet with sessions, times, subjects, and rooms.
+        {/* Upload Dropzone */}
+        <div className="rounded-[10px] border-2 border-dashed border-[#E7E0D2] bg-[#FDFBF6] p-6 text-center transition hover:border-[#0F766E]/50 mb-6">
+          <FileSpreadsheet className="w-8 h-8 text-[#0F766E] mx-auto mb-2" />
+          <h3 className="text-sm font-bold text-[#1F2937]">Structured Excel Timetable (.xlsx)</h3>
+          <p className="text-xs text-[#6B7280] mt-1 mb-3">
+            Upload your completed schedule spreadsheet with sessions, times, subjects, and rooms.
+          </p>
+          <label className="btn-secondary text-xs h-9 px-4 cursor-pointer inline-flex items-center gap-1.5">
+            <Upload className="w-3.5 h-3.5 text-[#0F766E]" />
+            <span>{isParsing ? "Parsing Spreadsheet..." : "Choose Excel File"}</span>
+            <input
+              type="file"
+              accept=".xlsx, .xls"
+              onChange={handleFileChange}
+              disabled={isParsing}
+              className="hidden"
+            />
+          </label>
+          {file && (
+            <p className="text-xs font-mono text-[#0F766E] mt-2 truncate">
+              Selected: {file.name} ({(file.size / 1024).toFixed(1)} KB)
             </p>
-            <label className="btn-secondary text-xs h-9 px-4 cursor-pointer inline-flex items-center gap-1.5">
-              <Upload className="w-3.5 h-3.5 text-[#0F766E]" />
-              <span>{isParsing ? "Parsing Spreadsheet..." : "Choose Excel File"}</span>
-              <input
-                type="file"
-                accept=".xlsx, .xls"
-                onChange={handleFileChange}
-                disabled={isParsing}
-                className="hidden"
-              />
-            </label>
-            {file && (
-              <p className="text-xs font-mono text-[#0F766E] mt-2 truncate">
-                Selected: {file.name} ({(file.size / 1024).toFixed(1)} KB)
-              </p>
-            )}
-          </div>
-
-          {/* 2. Official PDF / Image Attachment */}
-          <div className="rounded-[10px] border-2 border-dashed border-[#E7E0D2] bg-[#FDFBF6] p-5 text-center transition hover:border-[#0F766E]/50">
-            <FileText className="w-8 h-8 text-[#4F46E5] mx-auto mb-2" />
-            <h3 className="text-xs font-bold text-[#1F2937]">Official PDF or Image Attachment (Optional)</h3>
-            <p className="text-[11px] text-[#6B7280] mt-1 mb-3">
-              Attach the signed official notice or photo (.pdf, .png, .jpg) for students to download.
-            </p>
-            <label className="btn-secondary text-xs h-9 px-4 cursor-pointer inline-flex items-center gap-1.5">
-              <Upload className="w-3.5 h-3.5 text-[#4F46E5]" />
-              <span>{attachmentUploading ? "Uploading..." : "Attach Official Document"}</span>
-              <input
-                type="file"
-                accept=".pdf, image/png, image/jpeg, image/webp"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) {
-                    handleAttachmentUpload(f);
-                  }
-                }}
-                disabled={attachmentUploading}
-                className="hidden"
-              />
-            </label>
-            {attachmentData && (
-              <p className="text-xs font-mono text-[#15803D] mt-2 flex items-center justify-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                Attached: {attachmentData.name}
-              </p>
-            )}
-          </div>
+          )}
         </div>
 
         {/* Parse Feedback: Errors & Warnings */}

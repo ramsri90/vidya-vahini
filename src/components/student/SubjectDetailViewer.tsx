@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
-  Download,
+  ExternalLink,
   FileText,
   Mail,
   Phone,
@@ -453,8 +453,8 @@ export function SubjectDetailViewer({
                             disabled={isDownloading}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] bg-[#0F766E] hover:bg-[#115E59] text-white text-xs font-semibold transition-colors disabled:opacity-50 shadow-xs"
                           >
-                            <Download className="w-3.5 h-3.5" />
-                            <span>{isDownloading ? "Preparing..." : "Download"}</span>
+                            <ExternalLink className="w-3.5 h-3.5" />
+                            <span>{isDownloading ? "Opening..." : "Open File"}</span>
                           </button>
                         </td>
                       </tr>
