@@ -215,8 +215,18 @@ export const presignUploadSchema = z.object({
     .number()
     .int("Size must be an integer")
     .positive("Size must be positive and non-zero")
-    .max(MAX_RESOURCE_SIZE_BYTES, "File size must not exceed 50 MB"),
-});
+    .max(MAX_RESOURCE_SIZE_BYTES, "File size must not exceed 50 MB")
+    .optional(),
+  fileSizeBytes: z.coerce
+    .number()
+    .int("Size must be an integer")
+    .positive("Size must be positive and non-zero")
+    .max(MAX_RESOURCE_SIZE_BYTES, "File size must not exceed 50 MB")
+    .optional(),
+}).transform((data) => ({
+  ...data,
+  sizeBytes: data.sizeBytes ?? data.fileSizeBytes ?? 0,
+}));
 export type PresignUploadInput = z.infer<typeof presignUploadSchema>;
 
 export const confirmUploadSchema = z.object({

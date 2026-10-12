@@ -140,6 +140,7 @@ export function ComponentResourceManager({
           message,
           filename: file.name,
           mimeType: file.type || "application/octet-stream",
+          sizeBytes: file.size,
           fileSizeBytes: file.size,
         }),
       });
@@ -233,6 +234,7 @@ export function ComponentResourceManager({
           message: replacingResource.message || "",
           filename: file.name,
           mimeType: file.type || "application/octet-stream",
+          sizeBytes: file.size,
           fileSizeBytes: file.size,
         }),
       });
