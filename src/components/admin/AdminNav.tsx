@@ -152,6 +152,7 @@ export function AdminNav({
                 <Link
                   key={item.href}
                   href={item.href}
+                  prefetch={true}
                   onClick={onNavigate}
                   className={`flex items-center gap-3 px-3 h-10 rounded-[10px] text-sm font-medium transition-colors ${
                     active

@@ -40,6 +40,7 @@ export function FacultyNav({ userName }: FacultyNavProps) {
         <nav className="flex items-center gap-2 text-xs font-semibold">
           <Link
             href="/faculty"
+            prefetch={true}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[10px] text-[#6B7280] hover:text-[#0F766E] hover:bg-[#CCFBF1]/50 transition-colors"
           >
             <BookOpen className="w-3.5 h-3.5" />
@@ -47,6 +48,7 @@ export function FacultyNav({ userName }: FacultyNavProps) {
           </Link>
           <Link
             href="/faculty/profile"
+            prefetch={true}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[10px] text-[#6B7280] hover:text-[#0F766E] hover:bg-[#CCFBF1]/50 transition-colors"
           >
             <User className="w-3.5 h-3.5" />

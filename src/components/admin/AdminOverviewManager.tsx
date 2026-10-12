@@ -137,6 +137,7 @@ export function AdminOverviewManager({
           {/* 3. Add Faculty */}
           <Link
             href="/admin/faculty"
+            prefetch={true}
             className="card-study p-5 text-left hover:border-[#0F766E] hover:shadow-md transition-all group flex flex-col justify-between"
           >
             <div>
@@ -159,6 +160,7 @@ export function AdminOverviewManager({
           {/* 4. Import Students (Excel) */}
           <Link
             href="/admin/students"
+            prefetch={true}
             className="card-study p-5 text-left hover:border-[#0F766E] hover:shadow-md transition-all group flex flex-col justify-between"
           >
             <div>
@@ -181,6 +183,7 @@ export function AdminOverviewManager({
           {/* 5. Create Section */}
           <Link
             href="/admin/sections"
+            prefetch={true}
             className="card-study p-5 text-left hover:border-[#0F766E] hover:shadow-md transition-all group flex flex-col justify-between"
           >
             <div>
@@ -203,6 +206,7 @@ export function AdminOverviewManager({
           {/* 6. Create Subject */}
           <Link
             href="/admin/subjects"
+            prefetch={true}
             className="card-study p-5 text-left hover:border-[#0F766E] hover:shadow-md transition-all group flex flex-col justify-between"
           >
             <div>
@@ -237,6 +241,7 @@ export function AdminOverviewManager({
           </div>
           <Link
             href="/admin/class-subjects"
+            prefetch={true}
             className="text-xs font-semibold text-[#0F766E] hover:underline flex items-center gap-1"
           >
             <span>Manage Section Subjects &rarr;</span>
