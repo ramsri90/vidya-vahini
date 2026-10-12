@@ -320,26 +320,6 @@ export function TimetableManager({ sections, timetables }: TimetableManagerProps
         </div>
       )}
 
-      {/* Main Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-heading text-2xl font-bold text-[#1F2937]">Class Timetable Management</h1>
-          <p className="text-xs text-[#6B7280] mt-1">
-            Create, upload, preview, validate, and publish official section timetables from structured Excel files.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <a
-            href="/api/timetable/template"
-            download="vidya_vahini_timetable_template.xlsx"
-            className="btn-secondary text-xs h-10 px-4 inline-flex items-center gap-2"
-          >
-            <Download className="w-4 h-4 text-[#0F766E]" />
-            <span>Download Excel Template</span>
-          </a>
-        </div>
-      </div>
-
       {/* Section 1: Timetable Editor / Upload Card */}
       <div className="card-study p-6">
         <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#E7E0D2]">

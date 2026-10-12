@@ -2,6 +2,7 @@ import { requireRole } from "@/lib/auth/session";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { prisma } from "@/lib/prisma";
 import { TimetableManager } from "@/components/admin/TimetableManager";
+import { Download } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +43,17 @@ export default async function AdminTimetablePage() {
       <div className="max-w-[1200px] mx-auto">
         <AdminNav
           title="Class Timetable"
-          description="Create, validate, publish, and archive section class timetables."
+          description="Create, upload, preview, validate, and publish official section timetables from structured Excel files."
+          action={
+            <a
+              href="/api/timetable/template"
+              download="vidya_vahini_timetable_template.xlsx"
+              className="btn-secondary text-xs h-10 px-4 inline-flex items-center gap-2"
+            >
+              <Download className="w-4 h-4 text-[#0F766E]" />
+              <span>Download Excel Template</span>
+            </a>
+          }
         />
 
         <TimetableManager sections={sections} timetables={timetables} />
