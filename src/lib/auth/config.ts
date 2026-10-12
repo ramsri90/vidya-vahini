@@ -11,6 +11,7 @@ import {
 } from "@/lib/rate-limit";
 
 export const authConfig: NextAuthConfig = {
+  trustHost: true,
   session: {
     strategy: "jwt",
   },
