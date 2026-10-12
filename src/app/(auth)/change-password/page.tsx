@@ -1,14 +1,18 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Image from "next/image";
 import { changePasswordAction } from "@/lib/auth/actions";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function ChangePasswordPage() {
   const [state, formAction, isPending] = useActionState(
     changePasswordAction,
     null
   );
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#FBF7EF] p-4">
@@ -44,14 +48,24 @@ export default function ChangePasswordPage() {
             >
               Current Password
             </label>
-            <input
-              id="currentPassword"
-              name="currentPassword"
-              type="password"
-              required
-              autoComplete="current-password"
-              className="input-study w-full text-xs"
-            />
+            <div className="relative">
+              <input
+                id="currentPassword"
+                name="currentPassword"
+                type={showCurrent ? "text" : "password"}
+                required
+                autoComplete="current-password"
+                className="input-study w-full text-xs pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrent((p) => !p)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#6B7280] hover:text-[#0F766E] transition-colors cursor-pointer"
+                aria-label={showCurrent ? "Hide current password" : "Show current password"}
+              >
+                {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
 
           <div>
@@ -61,15 +75,25 @@ export default function ChangePasswordPage() {
             >
               New Password (minimum 8 characters)
             </label>
-            <input
-              id="newPassword"
-              name="newPassword"
-              type="password"
-              required
-              minLength={8}
-              autoComplete="new-password"
-              className="input-study w-full text-xs"
-            />
+            <div className="relative">
+              <input
+                id="newPassword"
+                name="newPassword"
+                type={showNew ? "text" : "password"}
+                required
+                minLength={8}
+                autoComplete="new-password"
+                className="input-study w-full text-xs pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNew((p) => !p)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#6B7280] hover:text-[#0F766E] transition-colors cursor-pointer"
+                aria-label={showNew ? "Hide new password" : "Show new password"}
+              >
+                {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
 
           <div>
@@ -79,15 +103,25 @@ export default function ChangePasswordPage() {
             >
               Confirm New Password
             </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              required
-              minLength={8}
-              autoComplete="new-password"
-              className="input-study w-full text-xs"
-            />
+            <div className="relative">
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirm ? "text" : "password"}
+                required
+                minLength={8}
+                autoComplete="new-password"
+                className="input-study w-full text-xs pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirm((p) => !p)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#6B7280] hover:text-[#0F766E] transition-colors cursor-pointer"
+                aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
+              >
+                {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
 
           <button
