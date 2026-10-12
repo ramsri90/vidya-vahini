@@ -30,7 +30,16 @@ export interface AnnouncementItem {
 
 export interface ResourceItem {
   id: string;
-  category: "unit_1" | "unit_2" | "mid_paper" | "previous_paper" | "important_questions" | "reference";
+  category:
+    | "unit_1"
+    | "unit_2"
+    | "unit_3"
+    | "unit_4"
+    | "unit_5"
+    | "mid_paper"
+    | "previous_paper"
+    | "important_questions"
+    | "reference";
   title: string;
   message: string | null;
   fileSizeBytes: number | null;
@@ -50,6 +59,9 @@ interface SubjectDetailViewerProps {
 const CATEGORY_TABS = [
   { key: "unit_1", label: "Unit 1" },
   { key: "unit_2", label: "Unit 2" },
+  { key: "unit_3", label: "Unit 3" },
+  { key: "unit_4", label: "Unit 4" },
+  { key: "unit_5", label: "Unit 5" },
   { key: "mid_paper", label: "Mid paper" },
   { key: "previous_paper", label: "Previous paper" },
   { key: "important_questions", label: "Important questions" },

@@ -115,7 +115,12 @@ export function FacultyManager({ initialFaculty }: FacultyManagerProps) {
       if (res.error) {
         setError(res.error);
       } else if (res.data) {
-        setSuccess(`Faculty "${res.data.faculty.name}" created successfully. Temporary password: ${res.data.tempPassword}`);
+        setSuccess(`Faculty "${res.data.faculty.name}" created successfully.`);
+        setResetModal({
+          userName: res.data.faculty.name,
+          tempPassword: res.data.tempPassword,
+        });
+        setCopied(false);
         form.reset();
       }
     });

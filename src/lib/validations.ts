@@ -190,6 +190,9 @@ export const presignUploadSchema = z.object({
   category: z.enum([
     "unit_1",
     "unit_2",
+    "unit_3",
+    "unit_4",
+    "unit_5",
     "mid_paper",
     "previous_paper",
     "important_questions",

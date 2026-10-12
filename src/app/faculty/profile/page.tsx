@@ -13,13 +13,13 @@ export default async function FacultyProfilePage() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 sm:p-10">
+    <div className="min-h-screen bg-[#FBF7EF] p-6 sm:p-10">
       <div className="mx-auto max-w-6xl">
         <FacultyNav userName={user.name} />
 
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Faculty Profile</h1>
-          <p className="text-sm text-gray-600">
+          <h1 className="font-heading text-2xl font-bold text-[#1F2937]">Faculty Profile</h1>
+          <p className="text-xs text-[#6B7280] mt-0.5">
             Manage your personal contact details and security settings.
           </p>
         </div>

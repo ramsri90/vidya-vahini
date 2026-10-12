@@ -3,6 +3,13 @@
 import { useState, useTransition } from "react";
 import { assignFacultyToSectionSubject } from "@/lib/academic/actions";
 import { X, AlertCircle } from "lucide-react";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 export interface SectionItem {
   id: string;
@@ -134,21 +141,18 @@ export function FacultyAssignmentModal({
               </span>
               <span>Choose Section</span>
             </label>
-            <div className="relative">
-              <select
-                value={selectedSectionId}
-                onChange={(e) => setSelectedSectionId(e.target.value)}
-                required
-                className="w-full rounded-[10px] border border-[#E7E0D2] bg-white px-3.5 py-2.5 text-sm text-[#1F2937] focus:outline-none focus:ring-2 focus:ring-[#0F766E]"
-              >
-                <option value="">-- Select Section --</option>
+            <Select value={selectedSectionId} onValueChange={setSelectedSectionId}>
+              <SelectTrigger className="h-10 text-xs">
+                <SelectValue placeholder="-- Select Section --" />
+              </SelectTrigger>
+              <SelectContent>
                 {sections.map((sec) => (
-                  <option key={sec.id} value={sec.id}>
+                  <SelectItem key={sec.id} value={sec.id}>
                     {sec.name} (Year {sec.year}, Sem {sec.semester})
-                  </option>
+                  </SelectItem>
                 ))}
-              </select>
-            </div>
+              </SelectContent>
+            </Select>
             <p className="text-[11px] text-[#6B7280]">
               Select the student section receiving this instruction.
             </p>
@@ -162,19 +166,18 @@ export function FacultyAssignmentModal({
               </span>
               <span>Choose Subject</span>
             </label>
-            <select
-              value={selectedSubjectId}
-              onChange={(e) => setSelectedSubjectId(e.target.value)}
-              required
-              className="w-full rounded-[10px] border border-[#E7E0D2] bg-white px-3.5 py-2.5 text-sm text-[#1F2937] focus:outline-none focus:ring-2 focus:ring-[#0F766E]"
-            >
-              <option value="">-- Select Subject --</option>
-              {subjects.map((sub) => (
-                <option key={sub.id} value={sub.id}>
-                  {sub.code} - {sub.name} (Sem {sub.semester})
-                </option>
-              ))}
-            </select>
+            <Select value={selectedSubjectId} onValueChange={setSelectedSubjectId}>
+              <SelectTrigger className="h-10 text-xs">
+                <SelectValue placeholder="-- Select Subject --" />
+              </SelectTrigger>
+              <SelectContent>
+                {subjects.map((sub) => (
+                  <SelectItem key={sub.id} value={sub.id}>
+                    {sub.code} - {sub.name} (Sem {sub.semester})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <p className="text-[11px] text-[#6B7280]">
               Select the academic course being taught.
             </p>
@@ -188,19 +191,18 @@ export function FacultyAssignmentModal({
               </span>
               <span>Choose Faculty</span>
             </label>
-            <select
-              value={selectedFacultyId}
-              onChange={(e) => setSelectedFacultyId(e.target.value)}
-              required
-              className="w-full rounded-[10px] border border-[#E7E0D2] bg-white px-3.5 py-2.5 text-sm text-[#1F2937] focus:outline-none focus:ring-2 focus:ring-[#0F766E]"
-            >
-              <option value="">-- Select Faculty Member --</option>
-              {facultyList.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.name} ({f.email})
-                </option>
-              ))}
-            </select>
+            <Select value={selectedFacultyId} onValueChange={setSelectedFacultyId}>
+              <SelectTrigger className="h-10 text-xs">
+                <SelectValue placeholder="-- Select Faculty Member --" />
+              </SelectTrigger>
+              <SelectContent>
+                {facultyList.map((f) => (
+                  <SelectItem key={f.id} value={f.id}>
+                    {f.name} ({f.email})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <p className="text-[11px] text-[#6B7280]">
               Assign teaching responsibility for this {type} component.
             </p>

@@ -139,11 +139,13 @@ export function StudentManager({
   // When filter changes, update default section on create & import pickers
   const handleFilterSectionChange = (newSecId: string) => {
     setSelectedSectionId(newSecId);
-    setAddStudentSectionId(newSecId);
-    setImportTargetSectionId(newSecId);
+    if (newSecId !== "ALL") {
+      setAddStudentSectionId(newSecId);
+      setImportTargetSectionId(newSecId);
+    }
   };
 
-  const filteredStudents = selectedSectionId
+  const filteredStudents = selectedSectionId && selectedSectionId !== "ALL"
     ? students.filter((s) => s.sectionId === selectedSectionId)
     : students;
 
@@ -466,7 +468,7 @@ export function StudentManager({
                   <SelectValue placeholder="All Sections" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Cohorts</SelectItem>
+                  <SelectItem value="ALL">All Cohorts</SelectItem>
                   {sections.map((sec) => (
                     <SelectItem key={sec.id} value={sec.id}>
                       {sec.name} (Year {sec.year}, Sem {sec.semester})
