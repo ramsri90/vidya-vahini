@@ -8,47 +8,93 @@ import { BookOpen, FileText, Megaphone, Users, ChevronRight, GraduationCap } fro
 export default async function StudentDashboardPage() {
   const user = await requireRole("student");
 
-  const student = await prisma.student.findUnique({
-    where: { userId: user.id },
-    include: {
-      section: true,
-      user: true,
-    },
-  });
+  // Fetch student profile and class subjects concurrently when sectionId is present in session
+  const [student, classSubjects] = await (async () => {
+    if (user.sectionId) {
+      return Promise.all([
+        prisma.student.findUnique({
+          where: { userId: user.id },
+          include: {
+            section: true,
+            user: true,
+          },
+        }),
+        prisma.classSubject.findMany({
+          where: {
+            sectionId: user.sectionId,
+            isActive: true,
+          },
+          include: {
+            subject: true,
+            components: {
+              include: {
+                faculty: {
+                  select: { id: true, name: true, email: true },
+                },
+                resources: {
+                  where: { status: "ready", archived: false },
+                  select: { id: true },
+                },
+                announcements: {
+                  select: { id: true },
+                },
+              },
+            },
+          },
+          orderBy: [
+            { subject: { year: "asc" } },
+            { subject: { semester: "asc" } },
+            { subject: { code: "asc" } },
+          ],
+        }),
+      ]);
+    }
+
+    const s = await prisma.student.findUnique({
+      where: { userId: user.id },
+      include: {
+        section: true,
+        user: true,
+      },
+    });
+
+    if (!s) return [null, []] as const;
+
+    const cs = await prisma.classSubject.findMany({
+      where: {
+        sectionId: s.sectionId,
+        isActive: true,
+      },
+      include: {
+        subject: true,
+        components: {
+          include: {
+            faculty: {
+              select: { id: true, name: true, email: true },
+            },
+            resources: {
+              where: { status: "ready", archived: false },
+              select: { id: true },
+            },
+            announcements: {
+              select: { id: true },
+            },
+          },
+        },
+      },
+      orderBy: [
+        { subject: { year: "asc" } },
+        { subject: { semester: "asc" } },
+        { subject: { code: "asc" } },
+      ],
+    });
+
+    return [s, cs] as const;
+  })();
 
   if (!student) {
     redirect("/login");
   }
-
-  // Fetch all active class_subjects belonging to student's section
-  const classSubjects = await prisma.classSubject.findMany({
-    where: {
-      sectionId: student.sectionId,
-      isActive: true,
-    },
-    include: {
-      subject: true,
-      components: {
-        include: {
-          faculty: {
-            select: { id: true, name: true, email: true },
-          },
-          resources: {
-            where: { status: "ready", archived: false },
-            select: { id: true },
-          },
-          announcements: {
-            select: { id: true },
-          },
-        },
-      },
-    },
-    orderBy: [
-      { subject: { year: "asc" } },
-      { subject: { semester: "asc" } },
-      { subject: { code: "asc" } },
-    ],
-  });
 
   // Calculate totals
   const totalSubjects = classSubjects.length;

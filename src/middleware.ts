@@ -69,8 +69,8 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 4. Logged-in user visiting /login: redirect to role home
-  if (isLoginPage) {
+  // 4. Logged-in user visiting /login or root /: redirect directly to role home
+  if (isLoginPage || pathname === "/") {
     return NextResponse.redirect(new URL(roleHome, req.url));
   }
 

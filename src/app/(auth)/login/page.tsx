@@ -4,7 +4,7 @@ import { useActionState, Suspense, useState } from "react";
 import Image from "next/image";
 import { loginAction } from "@/lib/auth/actions";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle, AlertCircle, Lock, User, Eye, EyeOff } from "lucide-react";
+import { CheckCircle, AlertCircle, Lock, User, Eye, EyeOff, Loader2 } from "lucide-react";
 
 function LoginForm() {
   const [state, formAction, isPending] = useActionState(loginAction, null);
@@ -113,9 +113,16 @@ function LoginForm() {
         <button
           type="submit"
           disabled={isPending}
-          className="btn-primary w-full h-11 text-sm font-semibold mt-2 cursor-pointer"
+          className="btn-primary w-full h-11 text-sm font-semibold mt-2 cursor-pointer flex items-center justify-center gap-2"
         >
-          {isPending ? "Signing in..." : "Sign in to Portal"}
+          {isPending ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Verifying &amp; Opening Portal...</span>
+            </>
+          ) : (
+            "Sign in to Portal"
+          )}
         </button>
       </form>
 
