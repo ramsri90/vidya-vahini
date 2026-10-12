@@ -194,7 +194,13 @@ export function ComponentResourceManager({
       });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Upload failed.";
-      setUploadError(msg);
+      if (msg.includes("Failed to fetch")) {
+        setUploadError(
+          "Direct upload to storage failed (Failed to fetch). This indicates CORS is not configured on your storage bucket, or R2 credentials are not set in Vercel environment variables."
+        );
+      } else {
+        setUploadError(msg);
+      }
     } finally {
       setIsUploading(false);
       setUploadStatus(null);
@@ -280,7 +286,13 @@ export function ComponentResourceManager({
       });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Replace failed.";
-      setReplaceError(msg);
+      if (msg.includes("Failed to fetch")) {
+        setReplaceError(
+          "Direct upload to storage failed (Failed to fetch). This indicates CORS is not configured on your storage bucket, or R2 credentials are not set in Vercel environment variables."
+        );
+      } else {
+        setReplaceError(msg);
+      }
     } finally {
       setIsReplacing(false);
     }

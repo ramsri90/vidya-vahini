@@ -29,6 +29,16 @@ function getCleanConfig() {
   };
 }
 
+export function isStorageConfigured(): boolean {
+  const config = getCleanConfig();
+  return Boolean(
+    config.endpoint &&
+    config.accessKeyId &&
+    config.secretAccessKey &&
+    config.bucketName
+  );
+}
+
 let cachedClient: S3Client | null = null;
 
 export function getS3Client(): S3Client {

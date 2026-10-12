@@ -6,7 +6,7 @@ import {
   ALLOWED_RESOURCE_MIMES,
   sanitizeFilename,
 } from "@/lib/validations";
-import { createUploadUrl } from "@/lib/storage";
+import { createUploadUrl, isStorageConfigured } from "@/lib/storage";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 
@@ -36,6 +36,17 @@ export async function POST(req: Request) {
 
   const { componentId, category, title, message, filename, mimeType, sizeBytes } =
     validation.data;
+
+  // 0. Cloud storage configuration check
+  if (!isStorageConfigured()) {
+    return NextResponse.json(
+      {
+        error:
+          "Cloud storage is not configured. Please set R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, and R2_BUCKET_NAME in Vercel environment variables.",
+      },
+      { status: 500 }
+    );
+  }
 
   // 1. Ownership & Archived Section check
   const component = await prisma.component.findUnique({
