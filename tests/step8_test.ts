@@ -703,7 +703,7 @@ async function runStep8Tests() {
   console.log(`  Login with unique test password status: ${loginSecretRes.status}`);
 
   // Query audit logs for the secret string
-  const secretAudits = await prisma.$queryRaw<any[]>`
+  const secretAudits = await prisma.$queryRaw<Array<{ id: string; action: string; meta: string }>>`
     SELECT id, action, metadata::text as meta
     FROM audit_logs
     WHERE metadata::text ILIKE ${`%${uniqueTestSecret}%`};

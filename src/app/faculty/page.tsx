@@ -76,13 +76,7 @@ export default async function FacultyDashboardPage() {
                       <span className="font-mono text-xs font-bold text-[#0F766E]">
                         {c.classSubject.subject.code}
                       </span>
-                      <span
-                        className={`rounded-[6px] px-2 py-0.5 text-xs font-semibold uppercase ${
-                          c.type === "theory"
-                            ? "bg-purple-50 text-purple-700 border border-purple-200"
-                            : "bg-teal-50 text-teal-700 border border-teal-200"
-                        }`}
-                      >
+                      <span className={c.type === "theory" ? "badge-theory" : "badge-lab"}>
                         {c.type}
                       </span>
                     </div>

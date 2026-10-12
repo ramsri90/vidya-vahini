@@ -1,8 +1,8 @@
 import { mock } from "node:test";
 
-let currentMockUser: any = null;
+let currentMockUser: unknown = null;
 
-export function setTestUser(user: any) {
+export function setTestUser(user: unknown) {
   currentMockUser = user;
 }
 

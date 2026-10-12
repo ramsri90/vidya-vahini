@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
-import { LogOut, BookOpen, User } from "lucide-react";
+import { LogOut, BookOpen, User, Calendar } from "lucide-react";
 
 interface FacultyNavProps {
   userName?: string | null;
@@ -45,6 +45,14 @@ export function FacultyNav({ userName }: FacultyNavProps) {
           >
             <BookOpen className="w-3.5 h-3.5" />
             <span>My Components</span>
+          </Link>
+          <Link
+            href="/faculty/timetable"
+            prefetch={true}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[10px] text-[#6B7280] hover:text-[#0F766E] hover:bg-[#CCFBF1]/50 transition-colors"
+          >
+            <Calendar className="w-3.5 h-3.5" />
+            <span>Class Timetable</span>
           </Link>
           <Link
             href="/faculty/profile"

@@ -2,9 +2,6 @@ import "./test-session-helper";
 import { setTestUser } from "./test-session-helper";
 import { prisma } from "../src/lib/prisma";
 import {
-  createSection,
-  createSubject,
-  linkClassSubject,
   assignComponent,
 } from "../src/lib/academic/actions";
 import { Role } from "@prisma/client";

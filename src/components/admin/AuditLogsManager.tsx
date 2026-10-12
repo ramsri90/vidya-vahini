@@ -157,7 +157,7 @@ export function AuditLogsManager({
               value={actorSearch}
               onChange={(e) => setActorSearch(e.target.value)}
               placeholder="Search by actor email..."
-              className="w-full h-10 px-3 border border-[#E7E0D2] rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-[#0F766E] bg-white"
+              className="input-study w-full text-xs"
               onKeyDown={(e) => {
                 if (e.key === "Enter") applyFilters(1);
               }}
@@ -174,7 +174,7 @@ export function AuditLogsManager({
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full h-10 px-3 border border-[#E7E0D2] rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-[#0F766E] bg-white"
+              className="input-study w-full text-xs"
             />
           </div>
 
@@ -188,7 +188,7 @@ export function AuditLogsManager({
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="w-full h-10 px-3 border border-[#E7E0D2] rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-[#0F766E] bg-white"
+              className="input-study w-full text-xs"
             />
           </div>
 
@@ -196,14 +196,14 @@ export function AuditLogsManager({
           <div className="flex items-center gap-2 pt-2 md:pt-0">
             <Button
               onClick={() => applyFilters(1)}
-              className="h-10 px-4 bg-[#0F766E] hover:bg-[#0F766E]/90 text-white font-semibold text-xs"
+              className="h-10 px-4 bg-[#0F766E] hover:bg-[#0F766E]/90 text-white font-semibold text-xs rounded-[10px]"
             >
               Filter
             </Button>
             <Button
               variant="outline"
               onClick={handleReset}
-              className="h-10 px-3 border-[#E7E0D2] text-[#6B7280] hover:text-[#1F2937] text-xs"
+              className="h-10 px-3 border-[#E7E0D2] text-[#6B7280] hover:text-[#1F2937] text-xs rounded-[10px]"
             >
               <RotateCcw className="w-3.5 h-3.5 mr-1" />
               Reset

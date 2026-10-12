@@ -452,16 +452,16 @@ export function RolloverManager({ sections }: RolloverManagerProps) {
               value={singleConfirmName}
               onChange={(e) => setSingleConfirmName(e.target.value)}
               placeholder={singleArchiveTarget?.name}
-              className="w-full px-3 py-2 border border-[#E7E0D2] rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-red-500 font-mono"
+              className="w-full px-3 py-2 border border-[#E7E0D2] rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 font-mono"
             />
           </div>
 
           <AlertDialogFooter>
-            <AlertDialogCancel className="text-xs border-[#E7E0D2]">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="text-xs border-[#E7E0D2] rounded-[10px]">Cancel</AlertDialogCancel>
             <Button
               disabled={loading || singleConfirmName !== singleArchiveTarget?.name}
               onClick={handleSingleArchive}
-              className="text-xs bg-red-600 hover:bg-red-700 text-white font-semibold"
+              className="text-xs bg-red-600 hover:bg-red-700 text-white font-semibold rounded-[10px]"
             >
               {loading ? "Archiving..." : "Confirm Archive Section"}
             </Button>
@@ -505,16 +505,16 @@ export function RolloverManager({ sections }: RolloverManagerProps) {
               value={batchConfirmText}
               onChange={(e) => setBatchConfirmText(e.target.value)}
               placeholder="ROLLOVER"
-              className="w-full px-3 py-2 border border-[#E7E0D2] rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-red-500 font-mono"
+              className="w-full px-3 py-2 border border-[#E7E0D2] rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 font-mono"
             />
           </div>
 
           <AlertDialogFooter>
-            <AlertDialogCancel className="text-xs border-[#E7E0D2]">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="text-xs border-[#E7E0D2] rounded-[10px]">Cancel</AlertDialogCancel>
             <Button
               disabled={loading || batchConfirmText !== "ROLLOVER"}
               onClick={handleBatchRollover}
-              className="text-xs bg-red-600 hover:bg-red-700 text-white font-semibold"
+              className="text-xs bg-red-600 hover:bg-red-700 text-white font-semibold rounded-[10px]"
             >
               {loading ? "Processing..." : `Archive ${selectedIds.length} Sections`}
             </Button>

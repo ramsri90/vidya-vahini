@@ -158,6 +158,7 @@ export default async function StudentDashboardPage() {
                       <Link
                         key={cs.id}
                         href={`/student/subjects/${cs.id}`}
+                        prefetch={true}
                         className="card-study p-6 hover:shadow-md hover:border-[#0F766E] transition-all duration-150 flex flex-col justify-between group"
                       >
                         <div>

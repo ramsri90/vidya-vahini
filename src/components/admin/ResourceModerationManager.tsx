@@ -203,18 +203,18 @@ export function ResourceModerationManager({ resources }: ResourceModerationManag
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by title, section, subject, uploader..."
-              className="w-full h-10 pl-9 pr-3 border border-[#E7E0D2] rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-[#0F766E] bg-white"
+              className="w-full h-10 pl-9 pr-3 border border-[#E7E0D2] rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] bg-white"
             />
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <span className="text-xs text-[#6B7280]">Status:</span>
-            <div className="flex items-center gap-1 bg-[#FAF7F2] p-1 rounded-lg border border-[#E7E0D2]">
+            <div className="flex items-center gap-1 bg-[#FAF7F2] p-1 rounded-[10px] border border-[#E7E0D2]">
               {["all", "active", "archived", "failed"].map((st) => (
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold capitalize transition-all ${
+                  className={`px-2.5 py-1 rounded-[8px] text-xs font-semibold capitalize transition-all ${
                     statusFilter === st
                       ? "bg-[#0F766E] text-white shadow-xs"
                       : "text-[#6B7280] hover:text-[#1F2937]"
@@ -426,7 +426,7 @@ export function ResourceModerationManager({ resources }: ResourceModerationManag
                   value={archiveReason}
                   onChange={(e) => setArchiveReason(e.target.value)}
                   placeholder="e.g. Outdated lecture syllabus notes, replaced by faculty update..."
-                  className="w-full px-3 py-2 border border-[#E7E0D2] rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-[#0F766E]"
+                  className="w-full px-3 py-2 border border-[#E7E0D2] rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E]"
                 />
               </div>
             </div>
@@ -436,14 +436,14 @@ export function ResourceModerationManager({ resources }: ResourceModerationManag
                 type="button"
                 variant="outline"
                 onClick={() => setArchiveTarget(null)}
-                className="text-xs border-[#E7E0D2]"
+                className="text-xs border-[#E7E0D2] rounded-[10px]"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={loading || archiveReason.trim().length < 3}
-                className="text-xs bg-[#0F766E] hover:bg-[#0F766E]/90 text-white font-semibold"
+                className="text-xs bg-[#0F766E] hover:bg-[#0F766E]/90 text-white font-semibold rounded-[10px]"
               >
                 {loading ? "Archiving..." : "Confirm Archive"}
               </Button>
@@ -488,16 +488,16 @@ export function ResourceModerationManager({ resources }: ResourceModerationManag
               value={deleteConfirmationText}
               onChange={(e) => setDeleteConfirmationText(e.target.value)}
               placeholder={deleteTarget?.title}
-              className="w-full px-3 py-2 border border-[#E7E0D2] rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-red-500 font-mono"
+              className="w-full px-3 py-2 border border-[#E7E0D2] rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 font-mono"
             />
           </div>
 
           <AlertDialogFooter>
-            <AlertDialogCancel className="text-xs border-[#E7E0D2]">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="text-xs border-[#E7E0D2] rounded-[10px]">Cancel</AlertDialogCancel>
             <Button
               disabled={loading || deleteConfirmationText !== deleteTarget?.title}
               onClick={handleDeleteSubmit}
-              className="text-xs bg-red-600 hover:bg-red-700 text-white font-semibold"
+              className="text-xs bg-red-600 hover:bg-red-700 text-white font-semibold rounded-[10px]"
             >
               {loading ? "Deleting..." : "Permanently Delete"}
             </Button>

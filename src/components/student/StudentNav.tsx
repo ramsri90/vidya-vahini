@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { BookOpen, User, LogOut } from "lucide-react";
+import { BookOpen, User, LogOut, Calendar } from "lucide-react";
 
 interface StudentNavProps {
   studentName: string;
@@ -16,6 +16,7 @@ export function StudentNav({ studentName, rollNo }: StudentNavProps) {
 
   const navItems = [
     { label: "My Subjects", href: "/student", icon: BookOpen },
+    { label: "Class Timetable", href: "/student/timetable", icon: Calendar },
     { label: "Profile", href: "/student/profile", icon: User },
   ];
 
@@ -58,6 +59,7 @@ export function StudentNav({ studentName, rollNo }: StudentNavProps) {
                   <Link
                     key={item.href}
                     href={item.href}
+                    prefetch={true}
                     className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-[10px] text-xs font-semibold transition-all ${
                       isActive
                         ? "bg-[#0F766E] text-white shadow-xs"
@@ -85,7 +87,7 @@ export function StudentNav({ studentName, rollNo }: StudentNavProps) {
 
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#E7E0D2] text-xs font-semibold rounded-[10px] text-[#B91C1C] bg-white hover:bg-red-50 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#E7E0D2] text-xs font-semibold rounded-[10px] text-[#B91C1C] bg-white hover:bg-red-50 transition-colors cursor-pointer"
               title="Sign Out"
             >
               <LogOut className="w-3.5 h-3.5" />
@@ -94,6 +96,32 @@ export function StudentNav({ studentName, rollNo }: StudentNavProps) {
           </div>
         </div>
       </div>
+
+      {/* Mobile Bottom Navigation Bar for ultra-fast, smooth navigation */}
+      <nav
+        className="sm:hidden fixed bottom-0 inset-x-0 bg-white border-t border-[#E7E0D2] z-50 px-2 py-1.5 flex justify-around items-center shadow-lg"
+        aria-label="Mobile Student Navigation"
+      >
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              prefetch={true}
+              className={`flex flex-col items-center justify-center py-1 px-3 rounded-[8px] text-[11px] font-semibold transition-colors ${
+                isActive
+                  ? "text-[#0F766E]"
+                  : "text-[#6B7280] hover:text-[#0F766E]"
+              }`}
+            >
+              <Icon className={`w-5 h-5 mb-0.5 ${isActive ? "text-[#0F766E]" : "text-[#6B7280]"}`} />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </header>
   );
 }

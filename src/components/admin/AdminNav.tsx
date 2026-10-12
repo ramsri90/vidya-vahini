@@ -18,6 +18,7 @@ import {
   RotateCcw,
   LogOut,
   Menu,
+  Calendar,
 } from "lucide-react";
 import {
   Sheet,
@@ -71,6 +72,11 @@ const NAV_GROUPS: NavGroup[] = [
         label: "Section Subjects",
         href: "/admin/class-subjects",
         icon: BookOpen,
+      },
+      {
+        label: "Class Timetable",
+        href: "/admin/timetable",
+        icon: Calendar,
       },
     ],
   },
@@ -154,13 +160,13 @@ export function AdminNav({
                   href={item.href}
                   prefetch={true}
                   onClick={onNavigate}
-                  className={`flex items-center gap-3 px-3 h-10 rounded-[10px] text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 px-3 h-10 rounded-[10px] text-sm font-medium transition-all ${
                     active
-                      ? "bg-[#0F766E] text-white"
-                      : "text-[#6B7280] hover:bg-[#CCFBF1] hover:text-[#0F766E]"
+                      ? "bg-[#CCFBF1] text-[#0F766E] border-l-[3px] border-[#0F766E] font-semibold pl-2.5 rounded-l-none"
+                      : "text-[#6B7280] hover:bg-[#CCFBF1]/50 hover:text-[#0F766E]"
                   }`}
                 >
-                  <Icon className={`w-4 h-4 shrink-0 ${active ? "text-white" : "text-[#6B7280]"}`} />
+                  <Icon className={`w-4 h-4 shrink-0 ${active ? "text-[#0F766E]" : "text-[#6B7280]"}`} />
                   <span className="truncate">{item.label}</span>
                 </Link>
               );

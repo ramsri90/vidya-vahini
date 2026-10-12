@@ -18,6 +18,7 @@ import {
   CheckCircle,
   X,
   Users,
+  Calendar,
 } from "lucide-react";
 
 export interface SummaryRow {
@@ -74,7 +75,7 @@ export function AdminOverviewManager({
             </div>
             <button
               onClick={() => setToastMessage(null)}
-              className="text-[#6B7280] hover:text-[#1F2937] p-1 rounded-md"
+              className="text-[#6B7280] hover:text-[#1F2937] p-1 rounded-[8px] cursor-pointer transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -222,6 +223,29 @@ export function AdminOverviewManager({
             </div>
             <div className="mt-4 pt-3 border-t border-[#E7E0D2] flex items-center justify-between text-xs font-semibold text-[#0F766E]">
               <span>Manage Subjects</span>
+              <span>&rarr;</span>
+            </div>
+          </Link>
+
+          {/* 7. Class Timetable */}
+          <Link
+            href="/admin/timetable"
+            prefetch={true}
+            className="card-study p-5 text-left hover:border-[#0F766E] hover:shadow-md transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-[10px] bg-[#CCFBF1] text-[#0F766E] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                <Calendar className="w-5 h-5" />
+              </div>
+              <h3 className="font-heading font-bold text-base text-[#1F2937] group-hover:text-[#0F766E] transition-colors">
+                Class Timetable
+              </h3>
+              <p className="text-xs text-[#6B7280] mt-1">
+                Upload Excel timetables, validate schedules, and publish to students.
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-[#E7E0D2] flex items-center justify-between text-xs font-semibold text-[#0F766E]">
+              <span>Manage Timetable</span>
               <span>&rarr;</span>
             </div>
           </Link>

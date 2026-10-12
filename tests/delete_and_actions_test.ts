@@ -5,7 +5,6 @@ import {
   deleteSection,
   deleteSubject,
   reassignComponentFaculty,
-  removeComponentSafely,
 } from "../src/lib/academic/actions";
 import {
   deleteStudent,
@@ -17,8 +16,7 @@ import bcrypt from "bcryptjs";
 import { getS3Client, getBucketName } from "../src/lib/storage";
 import { PutObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
 
-// Mock super admin session for requireRole
-const mockAdminId = "test-super-admin-id";
+// Run tests
 
 async function runDeleteTests() {
   console.log("=== RUNNING PART 6: HARD DELETE & BLOCKERS TESTS (TEST- PREFIX ONLY) ===");
@@ -217,7 +215,7 @@ async function runDeleteTests() {
     })
   );
 
-  const resRow = await prisma.resource.create({
+  await prisma.resource.create({
     data: {
       componentId: compSlot.id,
       uploadedBy: facUploads.id,
@@ -243,8 +241,9 @@ async function runDeleteTests() {
   let objectStillExists = true;
   try {
     await s3.send(new HeadObjectCommand({ Bucket: bucket, Key: storageKey }));
-  } catch (err: any) {
-    if (err.name === "NotFound" || err.$metadata?.httpStatusCode === 404) {
+  } catch (err: unknown) {
+    const e = err as { name?: string; $metadata?: { httpStatusCode?: number } };
+    if (e.name === "NotFound" || e.$metadata?.httpStatusCode === 404) {
       objectStillExists = false;
     }
   }

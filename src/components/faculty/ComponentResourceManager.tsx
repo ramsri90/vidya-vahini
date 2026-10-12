@@ -703,13 +703,13 @@ export function ComponentResourceManager({
                     </td>
                     <td className="px-6 py-3.5">
                       <span
-                        className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                        className={
                           res.status === "ready"
-                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            ? "badge-ready"
                             : res.status === "uploading"
-                            ? "bg-amber-50 text-amber-700 border border-amber-200"
-                            : "bg-red-50 text-red-700 border border-red-200"
-                        }`}
+                            ? "badge-lab"
+                            : "badge-failed"
+                        }
                       >
                         {res.status}
                       </span>
