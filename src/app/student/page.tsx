@@ -14,9 +14,24 @@ export default async function StudentDashboardPage() {
       return Promise.all([
         prisma.student.findUnique({
           where: { userId: user.id },
-          include: {
-            section: true,
-            user: true,
+          select: {
+            id: true,
+            rollNo: true,
+            sectionId: true,
+            section: {
+              select: {
+                id: true,
+                name: true,
+                year: true,
+                semester: true,
+              },
+            },
+            user: {
+              select: {
+                name: true,
+                email: true,
+              },
+            },
           },
         }),
         prisma.classSubject.findMany({
@@ -52,9 +67,24 @@ export default async function StudentDashboardPage() {
 
     const s = await prisma.student.findUnique({
       where: { userId: user.id },
-      include: {
-        section: true,
-        user: true,
+      select: {
+        id: true,
+        rollNo: true,
+        sectionId: true,
+        section: {
+          select: {
+            id: true,
+            name: true,
+            year: true,
+            semester: true,
+          },
+        },
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 

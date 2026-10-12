@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { Role } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { cache } from "react";
 
 export function getHomeRouteForRole(role: Role): string {
   switch (role) {
@@ -16,10 +17,10 @@ export function getHomeRouteForRole(role: Role): string {
   }
 }
 
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async () => {
   const session = await auth();
   return session?.user ?? null;
-}
+});
 
 export async function requireUser() {
   const user = await getCurrentUser();

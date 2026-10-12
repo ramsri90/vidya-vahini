@@ -12,6 +12,7 @@ import {
   recordRateLimitAttempt,
   resetRateLimit,
 } from "@/lib/rate-limit";
+import { invalidateUserSessionCache } from "@/lib/auth/config";
 
 export async function loginAction(
   _prevState: { error?: string; success?: boolean } | null,
@@ -29,11 +30,19 @@ export async function loginAction(
 
   const { identifier, password } = validation.data;
 
+  // Direct routing avoids an extra HTTP redirect roundtrip to "/"
+  const isRollNo = !identifier.includes("@");
+  const targetUrl = isRollNo
+    ? "/student"
+    : identifier.toLowerCase().includes("admin")
+    ? "/admin"
+    : "/";
+
   try {
     await signIn("credentials", {
       identifier,
       password,
-      redirectTo: "/",
+      redirectTo: targetUrl,
     });
     return { success: true };
   } catch (error) {
@@ -119,6 +128,8 @@ export async function changePasswordAction(
       },
     },
   });
+
+  invalidateUserSessionCache(user.id);
 
   // Log successful password change
   await writeAudit({

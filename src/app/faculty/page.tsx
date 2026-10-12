@@ -24,19 +24,21 @@ export default async function FacultyDashboardPage() {
 
   // Fetch active student count for each section
   const sectionIds = Array.from(new Set(components.map((c) => c.classSubject.sectionId)));
-  const studentCounts = await prisma.student.groupBy({
-    by: ["sectionId"],
-    where: {
-      sectionId: { in: sectionIds },
-      user: { isActive: true },
-    },
-    _count: { id: true },
-  });
-
   const studentCountMap = new Map<string, number>();
-  studentCounts.forEach((sc) => {
-    studentCountMap.set(sc.sectionId, sc._count.id);
-  });
+
+  if (sectionIds.length > 0) {
+    const studentCounts = await prisma.student.groupBy({
+      by: ["sectionId"],
+      where: {
+        sectionId: { in: sectionIds },
+        user: { isActive: true },
+      },
+      _count: { id: true },
+    });
+    studentCounts.forEach((sc) => {
+      studentCountMap.set(sc.sectionId, sc._count.id);
+    });
+  }
 
   return (
     <div className="min-h-screen bg-[#FBF7EF] p-6 sm:p-10">

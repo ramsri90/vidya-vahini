@@ -19,21 +19,18 @@ export default async function StudentSubjectDetailPage({ params }: SubjectDetail
   const user = await requireRole("student");
   const { classSubjectId } = await params;
 
-  const student = await prisma.student.findUnique({
-    where: { userId: user.id },
-    include: {
-      section: true,
-      user: true,
-    },
-  });
-
-  if (!student) {
-    redirect("/login");
-  }
-
-  // Fetch class_subject
-  const classSubject = await prisma.classSubject.findUnique({
-    where: { id: classSubjectId },
+  const [student, classSubject] = await Promise.all([
+    prisma.student.findUnique({
+      where: { userId: user.id },
+      select: {
+        id: true,
+        rollNo: true,
+        sectionId: true,
+        user: { select: { name: true } },
+      },
+    }),
+    prisma.classSubject.findUnique({
+      where: { id: classSubjectId },
     include: {
       subject: true,
       section: true,
@@ -66,7 +63,12 @@ export default async function StudentSubjectDetailPage({ params }: SubjectDetail
         },
       },
     },
-  });
+  }),
+]);
+
+  if (!student) {
+    redirect("/login");
+  }
 
   // Access control rule: Student can open a class_subject ONLY if it belongs to their section.
   // Otherwise 404.

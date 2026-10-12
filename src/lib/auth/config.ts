@@ -10,6 +10,37 @@ import {
   resetRateLimit,
 } from "@/lib/rate-limit";
 
+interface CachedUserStatus {
+  sessionVersion: number;
+  isActive: boolean;
+  mustChangePassword: boolean;
+  role: Role;
+  expiresAt: number;
+}
+
+const userSessionCache = new Map<string, CachedUserStatus>();
+const SESSION_CACHE_TTL_MS = 60 * 1000; // 60-second TTL to eliminate remote DB roundtrips on page loads
+
+export function primeUserSessionCache(user: {
+  id: string;
+  sessionVersion: number;
+  isActive: boolean;
+  mustChangePassword: boolean;
+  role: Role;
+}) {
+  userSessionCache.set(user.id, {
+    sessionVersion: user.sessionVersion,
+    isActive: user.isActive,
+    mustChangePassword: user.mustChangePassword,
+    role: user.role,
+    expiresAt: Date.now() + SESSION_CACHE_TTL_MS,
+  });
+}
+
+export function invalidateUserSessionCache(userId: string) {
+  userSessionCache.delete(userId);
+}
+
 export const authConfig: NextAuthConfig = {
   trustHost: true,
   session: {
@@ -148,6 +179,15 @@ export const authConfig: NextAuthConfig = {
         // Login success - clear rate limit counter
         resetRateLimit(identifier);
 
+        // Pre-warm the session validity cache so post-login navigation is instantaneous (0 DB calls)
+        primeUserSessionCache({
+          id: userRecord.id,
+          sessionVersion: userRecord.sessionVersion,
+          isActive: userRecord.isActive,
+          mustChangePassword: userRecord.mustChangePassword,
+          role: userRecord.role,
+        });
+
         return {
           id: userRecord.id,
           name: userRecord.name,
@@ -168,37 +208,68 @@ export const authConfig: NextAuthConfig = {
         token.mustChangePassword = user.mustChangePassword;
         token.sessionVersion = user.sessionVersion;
         token.sectionId = user.sectionId ?? null;
+        primeUserSessionCache({
+          id: user.id,
+          sessionVersion: user.sessionVersion,
+          isActive: true,
+          mustChangePassword: user.mustChangePassword,
+          role: user.role,
+        });
         return token;
       }
 
-      // Check session validity in Node.js runtime
+      // Check session validity in Node.js runtime using in-memory TTL cache to eliminate remote DB latency
       if (token.userId) {
-        try {
-          const dbUser = await prisma.user.findUnique({
-            where: { id: token.userId as string },
-            select: {
-              sessionVersion: true,
-              isActive: true,
-              mustChangePassword: true,
-              role: true,
-            },
-          });
+        const userId = token.userId as string;
+        const now = Date.now();
+        const cached = userSessionCache.get(userId);
 
-          if (
-            !dbUser ||
-            !dbUser.isActive ||
-            dbUser.sessionVersion !== token.sessionVersion
-          ) {
-            // Session invalidated
+        let status: {
+          sessionVersion: number;
+          isActive: boolean;
+          mustChangePassword: boolean;
+          role: Role;
+        } | null = null;
+
+        if (cached && cached.expiresAt > now) {
+          status = cached;
+        } else {
+          try {
+            const dbUser = await prisma.user.findUnique({
+              where: { id: userId },
+              select: {
+                sessionVersion: true,
+                isActive: true,
+                mustChangePassword: true,
+                role: true,
+              },
+            });
+
+            if (dbUser) {
+              status = dbUser;
+              userSessionCache.set(userId, {
+                ...dbUser,
+                expiresAt: now + SESSION_CACHE_TTL_MS,
+              });
+            }
+          } catch (error) {
+            console.error("JWT validation error in jwt callback:", error);
             return null;
           }
+        }
 
-          token.mustChangePassword = dbUser.mustChangePassword;
-          token.role = dbUser.role;
-        } catch (error) {
-          console.error("JWT validation error in jwt callback:", error);
+        if (
+          !status ||
+          !status.isActive ||
+          status.sessionVersion !== token.sessionVersion
+        ) {
+          userSessionCache.delete(userId);
+          // Session invalidated
           return null;
         }
+
+        token.mustChangePassword = status.mustChangePassword;
+        token.role = status.role;
       }
 
       return token;

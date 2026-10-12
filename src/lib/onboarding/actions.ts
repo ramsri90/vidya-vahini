@@ -19,6 +19,7 @@ import { Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { deleteObject } from "@/lib/storage";
+import { invalidateUserSessionCache } from "@/lib/auth/config";
 
 export type OnboardingActionResult<T = unknown> = {
   success?: boolean;
@@ -683,6 +684,7 @@ export async function removeStudent(formData: FormData): Promise<OnboardingActio
     where: { id: student.userId },
     data: { isActive: false },
   });
+  invalidateUserSessionCache(student.userId);
 
   await writeAudit({
     actorId: admin.id,
@@ -780,6 +782,7 @@ export async function toggleStudentActive(formData: FormData): Promise<Onboardin
     where: { id: student.userId },
     data: { isActive: updatedActive },
   });
+  invalidateUserSessionCache(student.userId);
 
   await writeAudit({
     actorId: admin.id,
@@ -829,6 +832,7 @@ export async function resetUserPassword(
       sessionVersion: { increment: 1 },
     },
   });
+  invalidateUserSessionCache(userId);
 
   await writeAudit({
     actorId: admin.id,

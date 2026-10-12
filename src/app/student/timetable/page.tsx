@@ -9,31 +9,40 @@ export const dynamic = "force-dynamic";
 export default async function StudentTimetablePage() {
   const user = await requireRole("student");
 
-  const student = await prisma.student.findUnique({
-    where: { userId: user.id },
-    include: {
-      section: true,
-      user: true,
-    },
-  });
+  const [student, timetable] = await Promise.all([
+    prisma.student.findUnique({
+      where: { userId: user.id },
+      select: {
+        id: true,
+        rollNo: true,
+        sectionId: true,
+        section: {
+          select: { name: true, year: true, semester: true },
+        },
+        user: {
+          select: { name: true },
+        },
+      },
+    }),
+    user.sectionId
+      ? prisma.timetable.findFirst({
+          where: {
+            sectionId: user.sectionId,
+            status: "published",
+          },
+          include: {
+            slots: {
+              orderBy: { sortOrder: "asc" },
+            },
+          },
+          orderBy: { version: "desc" },
+        })
+      : Promise.resolve(null),
+  ]);
 
   if (!student) {
     redirect("/login");
   }
-
-  // Fetch the active published timetable for this student's section
-  const timetable = await prisma.timetable.findFirst({
-    where: {
-      sectionId: student.sectionId,
-      status: "published",
-    },
-    include: {
-      slots: {
-        orderBy: { sortOrder: "asc" },
-      },
-    },
-    orderBy: { version: "desc" },
-  });
 
   return (
     <div className="min-h-screen bg-[#FBF7EF] flex flex-col">
