@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  super_admin
+  faculty
+  student
+
+  @@map("role")
+}
+
+enum ComponentType {
+  theory
+  lab
+
+  @@map("component_type")
+}
+
+enum ResourceCategory {
+  unit_1
+  unit_2
+  mid_paper
+  previous_paper
+  important_questions
+  reference
+
+  @@map("resource_category")
+}
+
+enum ResourceStatus {
+  uploading
+  ready
+  failed
+
+  @@map("resource_status")
+}
+
+model User {
+  id                 String   @id @default(uuid())
+  name               String
+  email              String   @unique
+  phone              String?
+  role               Role     @default(student)
+  passwordHash       String   @map("password_hash")
+  mustChangePassword Boolean  @default(true) @map("must_change_password")
+  sessionVersion     Int      @default(1) @map("session_version")
+  isActive           Boolean  @default(true) @map("is_active")
+  showContactToStudents Boolean @default(true) @map("show_contact_to_students")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  student           Student?
+  componentsTaught  Component[]    @relation("FacultyComponents")
+  resourcesUploaded Resource[]     @relation("UploaderResources")
+  announcements     Announcement[] @relation("PosterAnnouncements")
+  auditLogs         AuditLog[]     @relation("ActorAuditLogs")
+
+  @@map("users")
+}
+
+model Section {
+  id         String   @id @default(uuid())
+  name       String
+  year       Int
+  semester   Int
+  isArchived Boolean  @default(false) @map("is_archived")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  students      Student[]
+  classSubjects ClassSubject[]
+
+  @@unique([name, year, semester])
+  @@map("sections")
+}
+
+model Subject {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  year      Int
+  semester  Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  classSubjects ClassSubject[]
+
+  @@map("subjects")
+}
+
+model ClassSubject {
+  id        String   @id @default(uuid())
+  sectionId String   @map("section_id")
+  subjectId String   @map("subject_id")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  section    Section     @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  subject    Subject     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  components Component[]
+
+  @@unique([sectionId, subjectId])
+  @@index([sectionId])
+  @@index([subjectId])
+  @@map("class_subjects")
+}
+
+model Component {
+  id             String        @id @default(uuid())
+  classSubjectId String        @map("class_subject_id")
+  type           ComponentType
+  facultyId      String        @map("faculty_id")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  classSubject  ClassSubject   @relation(fields: [classSubjectId], references: [id], onDelete: Cascade)
+  faculty       User           @relation("FacultyComponents", fields: [facultyId], references: [id], onDelete: Restrict)
+  resources     Resource[]
+  announcements Announcement[]
+
+  @@unique([classSubjectId, type])
+  @@index([facultyId])
+  @@index([classSubjectId])
+  @@map("components")
+}
+
+model Student {
+  id        String   @id @default(uuid())
+  userId    String   @unique @map("user_id")
+  rollNo    String   @unique @map("roll_no")
+  sectionId String   @map("section_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  section Section @relation(fields: [sectionId], references: [id], onDelete: Restrict)
+
+  @@index([sectionId])
+  @@index([rollNo])
+  @@map("students")
+}
+
+model Resource {
+  id            String           @id @default(uuid())
+  componentId   String           @map("component_id")
+  uploadedBy    String           @map("uploaded_by")
+  category      ResourceCategory
+  title         String
+  message       String?
+  r2Key         String           @map("r2_key")
+  fileSizeBytes BigInt?          @map("file_size_bytes")
+  mimeType      String?          @map("mime_type")
+  status        ResourceStatus   @default(uploading)
+  archived      Boolean          @default(false)
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
+
+  component Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  uploader  User      @relation("UploaderResources", fields: [uploadedBy], references: [id], onDelete: Restrict)
+
+  @@index([componentId])
+  @@index([uploadedBy])
+  @@index([category])
+  @@index([status])
+  @@map("resources")
+}
+
+model Announcement {
+  id          String   @id @default(uuid())
+  componentId String   @map("component_id")
+  postedBy    String   @map("posted_by")
+  message     String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  component Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  poster    User      @relation("PosterAnnouncements", fields: [postedBy], references: [id], onDelete: Restrict)
+
+  @@index([componentId])
+  @@index([postedBy])
+  @@map("announcements")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String?  @map("actor_id")
+  action     String
+  targetType String?  @map("target_type")
+  targetId   String?  @map("target_id")
+  metadata   Json?    @map("metadata")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  actor User? @relation("ActorAuditLogs", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId])
+  @@index([action])
+  @@index([targetType])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
